@@ -15,7 +15,7 @@ class Elevator(Observable):
     is_moving = False
     is_waiting_for_passengers = False
     is_going_up = False
-    passengers = Set(Passenger)
+    passengers = Set[Passenger]
 
     def __init__(self, elevator_number: int, capacity: int) -> None:
         super().__init__
@@ -96,7 +96,7 @@ class Elevator(Observable):
         return self.elevator_direction
 
     def add_floor_to_queue(self, destination_floor: int, direction: Direction) -> None:
-        self.destination_floors.push(destination_floor)
+        self.destination_floors.amend(destination_floor)
         self.set_elevator_direction(direction)
 
     def set_elevator_direction(self, direction: Direction):
@@ -125,7 +125,7 @@ class Elevator(Observable):
 
     def is_elevator_ready_to_move(self) -> bool:
         return (
-            self.is_waiting_for_passengers != True
+            self.is_waiting_for_passengers is False
             and len(self.destination_floors) > 0
             or self.is_moving
         )
@@ -135,8 +135,11 @@ class Elevator(Observable):
 
     def add_passengers_to_elevator(self, passenger: Passenger) -> None:
         destination_floor = passenger.get_destination_floor()
+        filtered_destination_floors = list(
+            filter(lambda x: x == destination_floor, self.destination_floors)
+        )
 
-        if self.destination_floors.includes(destination_floor) != True:
+        if len(filtered_destination_floors) == 0:
             self.destination_floors.append(destination_floor)
             self.sort_destination_queue_by_direction()
             self.passengers.add(passenger)

@@ -7,7 +7,7 @@ from utils import generate_random_number
 
 
 class Floor(Observable):
-    passengers = Set(Passenger)
+    passengers = Set[Passenger]
     currentFloor: int
     numOfFloors: int
     elevatorCallingButtonState: Dict[ElevatorCallingButton, bool]

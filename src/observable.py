@@ -19,12 +19,12 @@ class Observable:
             else:
                 self.observers[event] = [fn]
 
-            return {"unsubscribe": self.unsubscription(event, fn)}
+            return {"unsubscribe": self.unsubscribe_func(event, fn)}
 
         else:
             print("Not a function")
 
-    def unsubscription(self, event: str, callback: Callable[[Any], None]) -> None:
+    def unsubscribe_func(self, event: str, callback: Callable[[Any], None]) -> None:
         def unsubscribe() -> None:
             filtered_list = list(
                 filter(lambda x: (x != callback), self.observers.get(event))

@@ -10,6 +10,12 @@ class ElevatorWaitingQueue(TypedDict):
     direction: Direction
 
 
+def add_floor_on_elevator_queue(
+    elevator: Elevator, floor: int, direction: Direction
+) -> None:
+    elevator.add_floor_to_queue(floor, direction)
+
+
 class Controller:
     elevators: List[Elevator]
     floors: List[Floor]
@@ -64,7 +70,7 @@ class Controller:
             )
         )
 
-        if elevators_on_idle_or_same_direction.length:
+        if len(elevators_on_idle_or_same_direction) > 0:
             self.allocate_elevator_to_floor(
                 elevators_on_idle_or_same_direction, elevator_calling_floor, direction
             )
@@ -77,20 +83,10 @@ class Controller:
         self, elevators: List[Elevator], floor: int, direction: Direction
     ) -> None:
         closest_elevator = self.get_closest_elevator(elevators, floor)
-        self.add_floor_on_elevator_queue(closest_elevator, floor, direction)
-
-    def add_floor_on_elevator_queue(
-        elevator: Elevator, floor: int, direction: Direction
-    ) -> None:
-        elevator.add_floor_to_queue(floor, direction)
+        add_floor_on_elevator_queue(closest_elevator, floor, direction)
 
     def add_to_elevator_waiting_queue(self, floor: int, direction: Direction) -> None:
-        self.elevator_waiting_queue.append(
-            {
-                floor,
-                direction,
-            }
-        )
+        self.elevator_waiting_queue.append({floor: floor, direction: direction})
 
     def get_elevators_on_idle_or_same_direction(
         self, direction: Direction, floor: int
@@ -108,7 +104,7 @@ class Controller:
         )
 
     def get_closest_elevator(
-        elevators: List[Elevator], elevator_calling_floor: int
+        self: List[Elevator], elevator_calling_floor: int
     ) -> Elevator:
         def get_elevators(acc: Elevator, curr: Elevator):
             x = abs(curr.get_current_floor() - elevator_calling_floor)
@@ -116,7 +112,7 @@ class Controller:
 
             return curr if x < y else acc
 
-        return reduce(get_elevators, elevators)
+        return reduce(get_elevators, self)
 
     def get_elevator_list(self) -> List[Elevator]:
         return self.elevators
