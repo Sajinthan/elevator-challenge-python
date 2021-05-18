@@ -1,4 +1,4 @@
-from random import random
+import random
 from typing import Any, Callable, List, Type
 from controller import Controller
 from passenger import Passenger
@@ -8,7 +8,7 @@ from timer import SetInterval
 
 
 def create_passengers() -> Passenger:
-    return Passenger("passenger - " + random.randint(100))
+    return Passenger("passenger - " + str(random.randint(0, 100)))
 
 
 class Building:
