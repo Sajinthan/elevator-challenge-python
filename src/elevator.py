@@ -96,7 +96,7 @@ class Elevator(Observable):
         return self.elevator_direction
 
     def add_floor_to_queue(self, destination_floor: int, direction: Direction) -> None:
-        self.destination_floors.amend(destination_floor)
+        self.destination_floors.append(destination_floor)
         self.set_elevator_direction(direction)
 
     def set_elevator_direction(self, direction: Direction):

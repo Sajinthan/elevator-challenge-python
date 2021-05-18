@@ -1,9 +1,9 @@
 from random import random
 from typing import List
 from controller import Controller
-from elevator import Elevator
 from floor import Floor
 from passenger import Passenger
+from elevator import Elevator
 
 
 def create_passengers() -> Passenger:
@@ -12,8 +12,8 @@ def create_passengers() -> Passenger:
 
 class Building:
     num_of_floors: int
-    elevators = List[Elevator]
-    floors = List[Floor]
+    elevators: List[Elevator] = []
+    floors: List[Floor] = []
     execution_time_in_seconds: int
     execution_time_in_ms = 0
 
@@ -54,11 +54,11 @@ class Building:
         self, num_of_elevators: int, capacity: int
     ) -> None:
         for i in range(num_of_elevators):
-            self.elevators.amend(Elevator(i, capacity))
+            self.elevators.append(Elevator(i, capacity))
 
     def assign_floors_to_building(self, num_of_floors: int) -> None:
         for i in range(num_of_floors):
-            self.floors.amend(Floor(i, num_of_floors))
+            self.floors.append(Floor(i, num_of_floors))
 
     def assign_passengers_to_floor(self, passenger: Passenger) -> None:
         random_number = random.randint(self.num_of_floors)

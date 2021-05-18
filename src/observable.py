@@ -6,10 +6,10 @@ Subscription = Dict[str, Callable]
 
 
 class Observable:
-    observers: Observer
+    observers: Observer = {}
 
     def __init__(self) -> None:
-        self.observers = {}
+        pass
 
     def subscribe(self, event_enum: Event, fn: Callable[[Any], None]) -> Subscription:
         event = str(event_enum)

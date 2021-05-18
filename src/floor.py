@@ -1,4 +1,4 @@
-from typing import Dict, Set
+from typing import Dict, Set, Type
 from elevator import Elevator
 from enums import ElevatorCallingButton, FloorEvent
 from observable import Observable
@@ -10,17 +10,17 @@ class Floor(Observable):
     passengers = Set[Passenger]
     currentFloor: int
     numOfFloors: int
-    elevatorCallingButtonState: Dict[ElevatorCallingButton, bool]
+    elevatorCallingButtonState: Dict[ElevatorCallingButton, bool] = {}
 
     def __init__(self, current_floor: int, num_of_floors: int) -> None:
         super().__init__()
-        self.elevatorCallingButtonState = {
-            [ElevatorCallingButton.UP]: False,
-            [ElevatorCallingButton.DOWN]: True,
-        }
+        # self.elevatorCallingButtonState = {
+        #     [ElevatorCallingButton.UP]: False,
+        #     [ElevatorCallingButton.DOWN]: True,
+        # }
         self.current_floor = current_floor
         self.num_of_floors = num_of_floors
-        self.initSubscriptions()
+        self.init_subscriptions()
 
     def init_subscriptions(self) -> None:
         self.subscribe(
@@ -28,11 +28,11 @@ class Floor(Observable):
             self.elevator_available_for_transport,
         )
 
-    def elevator_available_for_transport(self, elevator: Elevator) -> None:
+    def elevator_available_for_transport(self, elevator: Type[Elevator]) -> None:
         self.assign_passengers_to_elevator(elevator)
         elevator.update_waiting_for_passenger_status(False)
 
-    def assign_passengers_to_elevator(self, elevator: Elevator) -> None:
+    def assign_passengers_to_elevator(self, elevator: Type[Elevator]) -> None:
         assigned_passenger_count = 0
         elevator_capacity = elevator.get_elevator_capacity()
 

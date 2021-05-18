@@ -14,8 +14,9 @@ class Main:
             self.elevator_capacity,
             self.execution_time_in_seconds,
         )
-
+        
         building.init()
 
 
-Main.execute()
+main = Main()
+main.execute()

@@ -1,7 +1,8 @@
 from random import random
-from elevator import Elevator
+from typing import Any, Type
+# from elevator import Elevator
 from enums import Direction
-from floor import Floor
+# from floor import Floor
 from observable import Observable
 from utils import generate_random_number
 
@@ -29,7 +30,7 @@ class Passenger(Observable):
     def get_destination_floor(self) -> int:
         return self.destination_floor
 
-    def move_to_elevator(self, elevator: Elevator, floor: Floor) -> None:
+    def move_to_elevator(self, elevator: Any, floor: Any) -> None:
         elevator_direction = elevator.get_elevator_current_direction()
         num_of_floors = floor.get_num_of_floors()
         self.destination_floor = self.calculate_passenger_destination(
@@ -42,9 +43,9 @@ class Passenger(Observable):
     def calculate_passenger_destination(
         self, direction: Direction, num_of_floors: int
     ) -> int:
-        if direction == direction.up:
+        if direction == Direction.UP:
             return random.randint(self.current_floor + 1, num_of_floors)
-        elif direction == direction.down:
+        elif direction == Direction.DOWN:
             return random.randint(0, self.current_floor - 1)
 
         return generate_random_number(num_of_floors, [self.current_floor])
