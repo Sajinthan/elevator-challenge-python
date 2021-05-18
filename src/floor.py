@@ -10,14 +10,14 @@ class Floor(Observable):
     passengers = Set[Passenger]
     currentFloor: int
     numOfFloors: int
-    elevatorCallingButtonState: Dict[ElevatorCallingButton, bool] = {}
+    elevatorCallingButtonState: Dict[ElevatorCallingButton, bool] = {
+        ElevatorCallingButton.UP: False,
+        ElevatorCallingButton.DOWN: False,
+    }
 
     def __init__(self, current_floor: int, num_of_floors: int) -> None:
         super().__init__()
-        # self.elevatorCallingButtonState = {
-        #     [ElevatorCallingButton.UP]: False,
-        #     [ElevatorCallingButton.DOWN]: True,
-        # }
+
         self.current_floor = current_floor
         self.num_of_floors = num_of_floors
         self.init_subscriptions()
