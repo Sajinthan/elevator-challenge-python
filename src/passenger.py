@@ -1,8 +1,6 @@
 import random
 from typing import Any
-
 from enums import Direction
-
 from observable import Observable
 from utils import generate_random_number
 
