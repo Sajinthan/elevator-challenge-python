@@ -1,8 +1,10 @@
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar
 from enums import Event
 
 Observer = Dict[Event, List[Callable[[Any], None]]]
 Subscription = Dict[str, Callable]
+
+T = TypeVar("T")
 
 
 class Observable:
@@ -33,9 +35,9 @@ class Observable:
 
         return unsubscribe
 
-    def publish(self, event_enum: Event, params: Any) -> None:
+    def publish(self, event_enum: Event, *args: Optional[Tuple[T]]) -> None:
         event = str(event_enum)
         callbacks = self.observers.get(event)
 
         for callback in callbacks:
-            callback(params)
+            callback(args)

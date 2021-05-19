@@ -1,10 +1,8 @@
-from random import random
-from typing import Any, Type
+import random
+from typing import Any
 
-# from elevator import Elevator
 from enums import Direction
 
-# from floor import Floor
 from observable import Observable
 from utils import generate_random_number
 

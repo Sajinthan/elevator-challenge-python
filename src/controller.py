@@ -1,4 +1,4 @@
-from typing import List, TypedDict
+from typing import List, Tuple, TypedDict
 from functools import reduce
 from elevator import Elevator
 from enums import Direction, ElevatorEvent, FloorEvent
@@ -36,7 +36,7 @@ class Controller:
 
     def init_elevator_subscriptions(self, elevator: Elevator) -> None:
         elevator.subscribe(
-            ElevatorEvent.ELEVATOR_IS_IDLE, lambda: print(self.elevator_waiting_queue)
+            ElevatorEvent.ELEVATOR_IS_IDLE, lambda x: print(self.elevator_waiting_queue)
         )
         elevator.subscribe(
             ElevatorEvent.ELEVATOR_REACHED_THE_DESTINATION,
@@ -57,27 +57,27 @@ class Controller:
             ),
         )
 
-    def notify_floors_about_elevator_arrival(self, elevator: Elevator) -> None:
+    def notify_floors_about_elevator_arrival(self, elevators: Tuple[Elevator]) -> None:
+        (elevator,) = elevators
+
         for floor in self.floors:
             floor.publish(FloorEvent.ELEVATOR_AVAILABLE_FOR_TRANSPORT, elevator)
 
     def assign_elevators_to_floor(
-        self, direction: Direction, elevator_calling_floor: int
+        self, direction: Direction, elevator_calling_floor: Tuple[int]
     ) -> None:
+        (floor,) = elevator_calling_floor
+
         elevators_on_idle_or_same_direction = (
-            self.get_elevators_on_idle_or_same_direction(
-                direction, elevator_calling_floor
-            )
+            self.get_elevators_on_idle_or_same_direction(direction, floor)
         )
 
         if len(elevators_on_idle_or_same_direction) > 0:
             self.allocate_elevator_to_floor(
-                elevators_on_idle_or_same_direction, elevator_calling_floor, direction
+                elevators_on_idle_or_same_direction, floor, direction
             )
         else:
-            self.add_to_elevator_waiting_queue(elevator_calling_floor, direction)
-
-        print("elevator waiting queue {}", self.elevator_waiting_queue)
+            self.add_to_elevator_waiting_queue(floor, direction)
 
     def allocate_elevator_to_floor(
         self, elevators: List[Elevator], floor: int, direction: Direction
@@ -86,7 +86,7 @@ class Controller:
         add_floor_on_elevator_queue(closest_elevator, floor, direction)
 
     def add_to_elevator_waiting_queue(self, floor: int, direction: Direction) -> None:
-        self.elevator_waiting_queue.append({floor: floor, direction: direction})
+        self.elevator_waiting_queue.append({"floor": floor, "direction": direction})
 
     def get_elevators_on_idle_or_same_direction(
         self, direction: Direction, floor: int
@@ -104,7 +104,7 @@ class Controller:
         )
 
     def get_closest_elevator(
-        self: List[Elevator], elevator_calling_floor: int
+        self, elevators: List[Elevator], elevator_calling_floor: int
     ) -> Elevator:
         def get_elevators(acc: Elevator, curr: Elevator):
             x = abs(curr.get_current_floor() - elevator_calling_floor)
@@ -112,7 +112,7 @@ class Controller:
 
             return curr if x < y else acc
 
-        return reduce(get_elevators, self)
+        return reduce(get_elevators, elevators)
 
     def get_elevator_list(self) -> List[Elevator]:
         return self.elevators

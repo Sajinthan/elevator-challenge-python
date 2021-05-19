@@ -63,6 +63,6 @@ class Building:
             self.floors.append(Floor(i, num_of_floors))
 
     def assign_passengers_to_floor(self, passenger: Passenger) -> None:
-        random_number = random.randint(self.num_of_floors)
+        random_number = random.randint(0, self.num_of_floors - 1)
         floor = self.floors[random_number]
         floor.add_passenger(passenger)

@@ -1,4 +1,4 @@
-from typing import Dict, Set, Type
+from typing import Dict, Set, Tuple, Type
 from elevator import Elevator
 from enums import ElevatorCallingButton, FloorEvent
 from observable import Observable
@@ -7,10 +7,10 @@ from utils import generate_random_number
 
 
 class Floor(Observable):
-    passengers = Set[Passenger]
-    currentFloor: int
-    numOfFloors: int
-    elevatorCallingButtonState: Dict[ElevatorCallingButton, bool] = {
+    passengers: Set[Passenger] = set()
+    current_floor: int
+    num_of_floors: int
+    elevator_calling_button_state: Dict[ElevatorCallingButton, bool] = {
         ElevatorCallingButton.UP: False,
         ElevatorCallingButton.DOWN: False,
     }
@@ -28,7 +28,10 @@ class Floor(Observable):
             self.elevator_available_for_transport,
         )
 
-    def elevator_available_for_transport(self, elevator: Type[Elevator]) -> None:
+    def elevator_available_for_transport(
+        self, elevators: Tuple[Type[Elevator]]
+    ) -> None:
+        (elevator,) = elevators
         self.assign_passengers_to_elevator(elevator)
         elevator.update_waiting_for_passenger_status(False)
 
@@ -62,9 +65,9 @@ class Floor(Observable):
         random_number = generate_random_number(self.num_of_floors, [self.current_floor])
 
         if random_number < self.current_floor:
-            self.update_elevator_calling_button_state(ElevatorCallingButton.down, True)
+            self.update_elevator_calling_button_state(ElevatorCallingButton.DOWN, True)
         else:
-            self.update_elevator_calling_button_state(ElevatorCallingButton.up, True)
+            self.update_elevator_calling_button_state(ElevatorCallingButton.UP, True)
 
     def update_elevator_calling_button_state(
         self, direction: ElevatorCallingButton, state: bool
@@ -74,13 +77,13 @@ class Floor(Observable):
             self.call_elevators(direction)
 
     def call_elevators(self, direction: ElevatorCallingButton) -> None:
-        print("floor {}", self.current_floor)
-        print("state: {}", self.elevator_calling_button_state)
+        print("floor ", self.current_floor)
+        print("state: ", self.elevator_calling_button_state)
         print("------------------------------------")
 
         event = (
             FloorEvent.UP_BUTTON_PRESSED_FROM_FLOOR
-            if direction == ElevatorCallingButton.up
+            if direction == ElevatorCallingButton.UP
             else FloorEvent.DOWN_BUTTON_PRESSED_FROM_FLOOR
         )
 

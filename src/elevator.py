@@ -8,14 +8,14 @@ class Elevator(Observable):
     elevator_number: int
     capacity: int
     current_floor = 0
-    destination_floors: List[int] = []
+    destination_floors: List[int] = list()
     elevator_direction = Direction.IDLE
     position_y = 0
     is_idle = True
     is_moving = False
     is_waiting_for_passengers = False
     is_going_up = False
-    passengers = Set[Passenger]
+    passengers: Set[Passenger] = set()
 
     def __init__(self, elevator_number: int, capacity: int) -> None:
         super().__init__
@@ -23,14 +23,15 @@ class Elevator(Observable):
         self.capacity = capacity
 
     def update_elevator_position(self) -> None:
-        if self.position_y and self.position_y % 5 == 0:
-            print("elevator {}", self.elevator_number)
-            print("moving: {}", self.is_elevator_ready_to_move())
-            print("position: {}", self.position_y)
-            print("direction: {}", self.elevator_direction)
-            print("current floor: {}", self.current_floor)
-            print("destination queue: {}", self.destination_floors)
-            print("---------------------------------------------------")
+        print("elevator ", self.elevator_number)
+        print("moving: ", self.is_elevator_ready_to_move())
+        print("position: ", self.position_y)
+        print("direction: ", self.elevator_direction)
+        print("current floor: ", self.current_floor)
+        print("destination queue: ", self.destination_floors)
+        print("passenger: ", self.passengers)
+        print("---------------------------------------------------")
+        # if self.position_y and self.position_y % 5 == 0:
 
         if self.is_elevator_ready_to_move():
             if self.is_elevator_reached_destination():
@@ -57,7 +58,9 @@ class Elevator(Observable):
         self.publish(ElevatorEvent.ELEVATOR_REACHED_THE_DESTINATION, self)
 
     def remove_passengers(self) -> None:
-        for passenger in self.passengers:
+        passengersCopy = self.passengers.copy()
+
+        for passenger in passengersCopy:
             if passenger.get_destination_floor() == self.current_floor:
                 self.passengers.remove(passenger)
 
@@ -135,6 +138,7 @@ class Elevator(Observable):
 
     def add_passengers_to_elevator(self, passenger: Passenger) -> None:
         destination_floor = passenger.get_destination_floor()
+
         filtered_destination_floors = list(
             filter(lambda x: x == destination_floor, self.destination_floors)
         )
