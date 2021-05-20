@@ -64,6 +64,8 @@ class Elevator(Observable):
             if passenger.get_destination_floor() == self.current_floor:
                 self.passengers.remove(passenger)
 
+        self.passengers = passengersCopy
+
     def set_elevator_movement(self) -> None:
         if self.is_going_up:
             self.position_y += 1
